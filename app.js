@@ -3,29 +3,29 @@ var pm2       = require('pm2');
 var SysLogger = require('ain2');
 var logger    = new SysLogger({tag: 'pm2',  facility: 'syslog'});
 
+
+function eventToString(data) {
+  const ret = {
+    app: data.process.name,
+    target_app: data.process.pm_id,
+    restart_count: data.process.restart_time,
+    status: data.event
+  };
+  return JSON.stringify(ret);
+}
 function logDataToString(data) {
-  let ret;
-  if (data.data) {
-    ret = {
-      app: data.process.name,
-      target_app: data.process.pm_id,
-      restart_count: data.process.restart_time,
-      status: data.event
-    };
-  } else {
-    ret = {
-      app: data.process.name,
-      id: data.process.pm_id,
-      data: data.data
-    };
-  }
+  const ret = {
+    app: data.process.name,
+    id: data.process.pm_id,
+    data: data.data
+  };
   return JSON.stringify(ret);
 }
 
 pm2.launchBus(function(err, bus) {
   bus.on('*', function(event, data){
     if (event == 'process:event') {
-      logger.warn(logDataToString(data));
+      logger.warn(eventToString(data));
     }
   });
 
