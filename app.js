@@ -19,7 +19,7 @@ function logDataToString(data) {
       data: data.data
     };
   }
-  return JSON.stringify(ret, null, '  ');
+  return JSON.stringify(ret);
 }
 
 pm2.launchBus(function(err, bus) {
